@@ -80,8 +80,8 @@ def calculate_std_dev(numbers, mean):
     total = 0
     for number in numbers:
         total += ((number - mean) ** 2)
-    variance = total / (len(numbers) - 1)
-    return math.sqrt(variance)
+    variance = total / (len(numbers) - 1) # variance is n-1
+    return math.sqrt(variance)# std. dev.
 
 
 def print_results(count, statistics):
