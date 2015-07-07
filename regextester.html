@@ -1,0 +1,169 @@
+<HTML>
+<HEAD>
+<TITLE>Regular Expression Test Page</TITLE>
+
+<!--- Some styles to make the page look nice --->
+<STYLE>
+  BODY {font-family:arial;font-size:12px}
+  INPUT {font-size:11px}
+  TEXTAREA {font-size:11px}
+  TH {background:#8888FF;color:white;text-align:left}
+  TD {background:#CCCC99;color:black;font-size:12px}
+  TD.RowA {background:#CCCC99}
+  TD.RowB {background:#EEEEBB}
+  .header {font-weight:bold}
+</STYLE>
+
+<SCRIPT LANGUAGE="JavaScript">
+// Turn off fields used only by replace
+function hideReplaceFields() {
+  document.getElementById('RegExReplace').disabled=true;
+  document.getElementById('replaceheader').disabled=true;
+}
+
+// Turn on fields used only by replace
+function showReplaceFields() {
+  document.getElementById('RegExReplace').disabled=false;
+  document.getElementById('replaceheader').disabled=false;
+}
+
+// Perform a find
+function processRegexFind(text, regex, flags) {
+	var reg = new RegExp(regex, flags);
+	var lastIdx = -1;
+	var iCount = 0;
+	var result = "";
+	var output = '<DIV STYLE="height:200px;overflow-y:auto;width:550">' +
+				 '<TABLE BORDER="0" CELLPADDING="2" CELLSPACING="0" WIDTH="550">' +
+				 '<TR><TH WIDTH="*">Match</TH><TH WIDTH="50">Position</TH><TH WIDTH="50">Length</TH></TR>';
+
+	// Loop as long as have matches
+	while (lastIdx != 0)
+	{
+		// Do it
+		var mtch = reg.exec(text);
+		
+		// Check if got one
+		if (reg.lastIndex != 0)
+		{
+			// Yep, increment counter
+			iCount++;
+
+			if (iCount % 2)
+				style = "RowA";
+			else
+				style = "RowB";
+			// Write output
+			output += '<TR CLASS="' + style + '"><TD>' +
+						RegExp.lastMatch + "</TD><TD>" +
+						(reg.lastIndex-RegExp.lastMatch.length) + "</TD><TD>" +
+						RegExp.lastMatch.length + "</TD></TR>";
+		}
+		
+		lastIdx = reg.lastIndex;
+	}
+	
+	output += "</TABLE>";
+
+	// Build result
+	if (iCount != 0)
+		result = "Matches Found: " + iCount+ "<BR>" + output;
+	else
+		result = "No matches";		
+		
+	return result;
+}
+
+// Process a replace
+function processRegexReplace(text, regexfind, regexreplace, flags) {
+	// Define regex
+	var re = new RegExp (regexfind, flags) ;
+	// Do it
+	var newstr = text.replace(re, regexreplace) ;
+	// Generate output
+	var result = '<DIV STYLE="height:200px;overflow-y:auto;width:550">' +
+				 '<TABLE BORDER="0" CELLPADDING="2" CELLSPACING="0" WIDTH="550">' +
+				 '<TR><TH>New Text</TH></TR><TR><TD>' +
+				 newstr + '</TD></TR>';
+
+return result;
+}
+
+// Process entry point
+function processRegex(form) {
+	var output="";
+	var flags;
+	if (form.CaseSensitive.checked)
+		flags = "g";
+	else
+		flags = "gi";
+
+	// What to do?
+	if (form.OperationFind.checked) {
+		output=processRegexFind(form.SearchText.value, form.RegEx.value, flags);
+	}
+	else if (form.OperationReplace.checked) {
+		output=processRegexReplace(form.SearchText.value, form.RegEx.value, form.RegExReplace.value, flags);
+	}
+
+	document.getElementById('output').innerHTML=output;
+		
+	return false;
+}
+</SCRIPT>
+</HEAD>
+
+<BODY>
+
+<FORM NAME="tester" ACTION="" METHOD="post" onSubmit="processRegex(this);return false">
+    
+<TABLE BORDER="1" CELLPADDING="4" CELLSPACING="0" WIDTH="550">
+  <TR>
+    <TH CLASS="Dialog">Regular Expression Tester</TH>
+  </TR>
+  <TR> 
+    <TD CLASS="Dialog"> 
+
+    <!--- Text input for the regular expression itself --->
+    <SPAN CLASS="header">Enter a regular expression:</SPAN><BR>
+    <INPUT NAME="RegEx" TYPE="Text" SIZE="65" STYLE="font-size:13px">
+
+    <!--- Checkbox to control case-sensitivity --->
+    <INPUT TYPE="Checkbox" NAME="CaseSensitive" ID="CaseSensitive" VALUE="Yes">
+    <LABEL FOR="CaseSensitive">Case sensitive</LABEL>
+    <BR>
+
+    <!--- Radio buttons to display find vs. replace --->
+    <INPUT TYPE="Radio" NAME="Operation" ID="OperationFind" VALUE="find" CHECKED onClick="hideReplaceFields()">
+    <LABEL FOR="OperationFind">Find</LABEL>
+    <INPUT TYPE="Radio" NAME="Operation" ID="OperationReplace" VALUE="replace" onClick="showReplaceFields()">
+    <LABEL FOR="OperationReplace">Replace</LABEL>
+    <BR>
+
+    <!--- Text input for the replace regular expression --->
+    <SPAN CLASS="header" ID="replaceheader">Enter the replace regular expression:</SPAN><BR>
+    <INPUT ID="RegExReplace" NAME="RegExReplace" TYPE="Text" SIZE="65" STYLE="font-size:13px">
+    <BR><BR>
+
+    <!--- Textarea where user can type the text to search --->  
+    <SPAN CLASS="header">And the text you wish to search:</SPAN><BR>
+    <TEXTAREA NAME="SearchText" WRAP="off" COLS="70" ROWS="6"></TEXTAREA>
+    <BR>
+
+    <!--- Submit button to start the search --->  
+    <INPUT NAME="Submit" TYPE="Submit" STYLE="font-weight:bold" VALUE="Match Now"></TD>
+  </TR>
+</TABLE>
+  
+</FORM>
+
+<!-- Display any reults here --->
+<SPAN id="output"></SPAN> 
+
+<!-- Default to find --->
+<SCRIPT LANGUAGE="JavaScript">
+hideReplaceFields();
+</SCRIPT>
+
+</BODY>
+</HTML>
