@@ -1,0 +1,9 @@
+[#00CCDE: MessageBox Window
+[lightgray: Frame
+[] [white: Message text]
+//
+[goldenrod: OK Button] [] [#ff0505: Cancel Button]
+/
+[]
+]
+]

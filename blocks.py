@@ -9,6 +9,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # General Public License for more details.
 
+#d:\Anaconda3\python.exe blocks.py messagbox.blk
+
 """
 BNF
 
@@ -400,7 +402,7 @@ def main():
             blocks = file.read()
         try:
             blocks = parse(blocks)
-            svg = file.replace(".blk", ".svg")
+            svg = ('xxx.svg')  #sys.stdout #file.replace(".blk", ".svg")
             if BlockOutput.save_blocks_as_svg(blocks, svg):
                 print("Saved {0}".format(svg))
             else:

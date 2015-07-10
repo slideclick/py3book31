@@ -169,6 +169,7 @@ def main():
     books_ply = ply_parse(TEXT)
     books_pyparsing = pyparsing_parse(TEXT)
     pprint.pprint(books_pyparsing)
+    #pprint.pprint(books_ply)
     assert books_ply == books_pyparsing
 
 
