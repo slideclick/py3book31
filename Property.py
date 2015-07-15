@@ -58,11 +58,11 @@ class Property:
         self.__setter = setter
         return self
 
-    def deleter(self, deleter):
+    def deleter(self, deleter):#这个是在下面 @extension.deleter  会调用的
         self.__deleter = deleter
         return self   
         
-    def __delete__(self, instance):
+    def __delete__(self, instance):#这个函数时描述符的接口要求的
         if self.__deleter is None:
             raise AttributeError("'{0}' is not allowed delete".format(
                                  self.__name__))
@@ -72,7 +72,7 @@ class NameAndExtension:
 
     def __init__(self, name, extension):
         self.__name = name
-        self.__extension = extension
+        self.__extension = extension#这哥们原来是self.extension = extension，实现del是会死递归
 
 
     @Property               # Uses the custom Property descriptor
@@ -92,7 +92,7 @@ class NameAndExtension:
     @extension.deleter       # Uses the custom Property descriptor
     def extension(self):
         print('{0} calledBy {1}'.format(inspect.stack()[0][3],inspect.stack()[1][3]))
-        del self.__extension       
+        del self.__extension   #陷阱：必须和外部名字不一样，否则死循环    
 
 if __name__ == "__main__":
     import doctest
