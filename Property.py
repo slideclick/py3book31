@@ -8,7 +8,6 @@
 # WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
 # General Public License for more details.
-
 """
 A simplified version of the built-in property class to show a possible
 implementation and illustrate how descriptors work.
@@ -29,13 +28,16 @@ AttributeError: 'name' is read-only
 >>> contact.extension = 975
 >>> contact.extension
 975
+   
 """
+import inspect
 
 class Property:
 
-    def __init__(self, getter, setter=None):
+    def __init__(self, getter, setter=None,deleter=None ):
         self.__getter = getter
         self.__setter = setter
+        self.__deleter = deleter
         self.__name__ = getter.__name__
 
 
@@ -56,12 +58,21 @@ class Property:
         self.__setter = setter
         return self
 
-
+    def deleter(self, deleter):
+        self.__deleter = deleter
+        return self   
+        
+    def __delete__(self, instance):
+        if self.__deleter is None:
+            raise AttributeError("'{0}' is not allowed delete".format(
+                                 self.__name__))
+        return self.__deleter(instance)
+        
 class NameAndExtension:
 
     def __init__(self, name, extension):
         self.__name = name
-        self.extension = extension
+        self.__extension = extension
 
 
     @Property               # Uses the custom Property descriptor
@@ -78,6 +89,10 @@ class NameAndExtension:
     def extension(self, extension):
         self.__extension = extension
 
+    @extension.deleter       # Uses the custom Property descriptor
+    def extension(self):
+        print('{0} calledBy {1}'.format(inspect.stack()[0][3],inspect.stack()[1][3]))
+        del self.__extension       
 
 if __name__ == "__main__":
     import doctest
